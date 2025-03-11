@@ -39,9 +39,20 @@ async function scrapeJumboOffers() {
         const content = offerElement
           .querySelector(".content h3")
           ?.innerText.trim()
+
+        const onelineDeal = offerElement.querySelector(".tag span")?.textContent
+        const twoLinesdeal = {
+          upper: offerElement.querySelector(".tag .upper")?.textContent,
+          lower: offerElement.querySelector(".tag .lower")?.textContent,
+        }
+
         const imageUrl = offerElement.querySelector(".card-image img")?.src
 
-        offers.push({ image: imageUrl, content })
+        offers.push({
+          image: imageUrl,
+          content,
+          deal: onelineDeal ?? twoLinesdeal,
+        })
       })
 
       categoryData.push({ name: categoryTitle, offers })
