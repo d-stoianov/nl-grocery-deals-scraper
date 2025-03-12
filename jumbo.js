@@ -24,6 +24,7 @@ async function scrapeOffers() {
 
   const categories = await page.evaluate(() => {
     // date parsing code
+
     const parseDate = (dateStr, year) => {
       const months = {
         jan: 1,
@@ -102,17 +103,17 @@ async function scrapeOffers() {
         const onelineDeal = offerElement
           .querySelector(".tag span")
           ?.textContent.trim()
-        const twoLinesdeal = {
-          upper: offerElement.querySelector(".tag .upper")?.textContent.trim(),
-          lower: offerElement.querySelector(".tag .lower")?.textContent.trim(),
-        }
+        const twoLinesdeal = [
+          offerElement.querySelector(".tag .upper")?.textContent.trim(),
+          offerElement.querySelector(".tag .lower")?.textContent.trim(),
+        ]
 
         const imageUrl = offerElement.querySelector(".card-image img")?.src
 
         offers.push({
           productName,
           image: imageUrl,
-          deal: onelineDeal ?? twoLinesdeal,
+          deal: onelineDeal ?? twoLinesdeal.join(" "),
           date: startAndEndDate,
         })
       })
