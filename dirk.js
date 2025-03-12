@@ -1,5 +1,7 @@
 import { JSDOM } from "jsdom"
 
+import { parseDate } from "./utils/date.js"
+
 const URL = "https://www.dirk.nl/aanbiedingen"
 
 async function scrapeOffers() {
@@ -8,6 +10,8 @@ async function scrapeOffers() {
 
   const dom = new JSDOM(html)
   const document = dom.window.document
+
+  const endDateString = document.querySelector(".date")?.textContent
 
   const result = []
 
@@ -28,9 +32,19 @@ async function scrapeOffers() {
         now: card.querySelector(".price-container .price")?.textContent,
         was: card.querySelector(".regular-price span")?.textContent,
       }
+
+      const endDate = parseDate(endDateString)
+      const startDate = new Date(
+        endDate.getFullYear(),
+        endDate.getMonth(),
+        endDate.getDate() - 5,
+        0,
+        0,
+        0
+      )
       const date = {
-        from: "",
-        to: "",
+        from: startDate,
+        to: endDate,
       }
 
       offers.push({
