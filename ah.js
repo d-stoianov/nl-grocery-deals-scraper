@@ -23,10 +23,59 @@ async function scrapeOffers() {
   }
 
   const categories = await page.evaluate(() => {
+    // date parsing code
+
+    const months = {
+      januari: 1,
+      februari: 2,
+      maart: 3,
+      april: 4,
+      mei: 5,
+      juni: 6,
+      juli: 7,
+      augustus: 8,
+      september: 9,
+      oktober: 10,
+      november: 11,
+      december: 12,
+    }
+
+    const parseDate = (dateStr, year) => {
+      const [day, monthAbbr] = dateStr.split(" ")
+      const month = months[monthAbbr.toLowerCase()]
+      if (!month) throw new Error(`Invalid month: ${monthAbbr}`)
+
+      return new Date(Date.UTC(year, month - 1, parseInt(day)))
+    }
+
+    const processDateString = (dateString) => {
+      const parts = dateString.split(" t/m ")
+      if (parts.length !== 2) throw new Error("Invalid date range format")
+
+      const [startDay, startMonth] = parts[0].trim().split(" ")
+      const [endDay, endMonth] = parts[1].trim().split(" ")
+
+      const year = new Date().getFullYear()
+
+      const startDate = parseDate(`${startDay} ${startMonth || endMonth}`, year)
+      const endDate = parseDate(`${endDay} ${endMonth || startMonth}`, year)
+
+      return {
+        start: startDate.toUTCString(),
+        end: endDate.toUTCString(),
+      }
+    }
+
+    // end date parsing code
+
     const categoryElements = document.querySelectorAll(
       ".grid_spanFrom-lg-2__jv8EM section"
     )
     const categoryData = []
+
+    const startAndEndDateString = document
+      ?.querySelector(".period-toggle_periodLabel__NVVAd")
+      ?.textContent.trim()
 
     categoryElements.forEach((categoryElement) => {
       const categoryTitle = categoryElement
@@ -47,10 +96,6 @@ async function scrapeOffers() {
           .querySelector(`[data-testhook="card-title"] span`)
           ?.innerText.trim()
 
-        const startAndEndDateString = offerElement
-          ?.querySelector(".period-toggle_periodLabel__NVVAd")
-          ?.textContent.trim()
-
         const dealsText = [
           ...offerElement.querySelectorAll(`[data-testhook="promotion-text"]`),
         ]
@@ -68,7 +113,7 @@ async function scrapeOffers() {
           productName,
           image: imageUrl,
           deal: dealsText,
-          date: startAndEndDateString,
+          date: processDateString(startAndEndDateString),
           price: {
             now: price?.getAttribute("data-testpricenow"),
             was: price?.getAttribute("data-testpricewas"),
@@ -81,8 +126,6 @@ async function scrapeOffers() {
 
     return categoryData
   })
-
-  console.log("categories", categories)
 
   await browser.close()
   return categories
