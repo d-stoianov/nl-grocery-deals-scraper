@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "jumbo": "node jumbo.js",
-    "ah": "node ah.js"
+    "ah": "node ah.js",
+    "dirk": "node dirk.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "jsdom": "^26.0.0",
     "puppeteer": "^24.4.0"
   }
 }
