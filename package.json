@@ -4,7 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "jumbo": "node jumbo.js",
+    "ah": "node ah.js"
   },
   "keywords": [],
   "author": "",
