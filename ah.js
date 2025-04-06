@@ -1,4 +1,5 @@
 import * as puppeteer from 'puppeteer'
+import { writeFile } from 'fs/promises'
 
 async function scrapeOffers() {
     const browser = await puppeteer.launch({ headless: true })
@@ -143,8 +144,7 @@ async function scrapeOffers() {
 
 async function main() {
     const offers = await scrapeOffers()
-    console.log(JSON.stringify(offers, null, 2))
-    return offers
+    await writeFile('./out/ah.json', JSON.stringify(offers, null, 4))
 }
 
 main()

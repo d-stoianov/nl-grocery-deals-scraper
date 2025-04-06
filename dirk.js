@@ -1,4 +1,5 @@
 import { JSDOM } from 'jsdom'
+import { writeFile } from 'fs/promises'
 
 import { parseDate } from './utils/date.js'
 
@@ -67,8 +68,7 @@ async function scrapeOffers() {
 
 async function main() {
     const offers = await scrapeOffers()
-    console.log(JSON.stringify(offers, null, 4))
-    return offers
+    await writeFile('./out/dirk.json', JSON.stringify(offers, null, 4))
 }
 
 main()
